@@ -60,16 +60,8 @@ const routes: RouteRecordRaw[] = [
         name: 'empresa-crear-vacante',
         component: () => import('../views/empresa/CrearVacanteView.vue')
       },
-      {
-        path: 'vacantes/:id/postulaciones',
-        name: 'empresa-postulaciones',
-        component: () => import('../views/empresa/PostulacionesView.vue')
-      },
-      {
-        path: 'convenio',
-        name: 'empresa-convenio',
-        component: () => import('../views/empresa/ConvenioView.vue')
-      }
+     
+     
     ]
   },
 
@@ -103,11 +95,7 @@ const routes: RouteRecordRaw[] = [
         name: 'estudiante-vacante-detalle',
         component: () => import('../views/estudiante/VacanteDetalleView.vue')
       },
-      {
-        path: 'postulaciones',
-        name: 'estudiante-postulaciones',
-        component: () => import('../views/estudiante/MisPostulacionesView.vue')
-      }
+      
     ]
   },
 
@@ -165,12 +153,7 @@ const routes: RouteRecordRaw[] = [
     ]
   },
 
-  // === RUTA 404 ===
-  {
-    path: '/:pathMatch(.*)*',
-    name: 'not-found',
-    component: () => import('../views/NotFoundView.vue')
-  }
+ 
 ];
 
 /**
