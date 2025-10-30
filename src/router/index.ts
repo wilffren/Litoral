@@ -24,159 +24,153 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: false, hideForAuth: true }
   },
   {
-    path: '/dashboardEmpresa/createVacante',
-    name: 'crearVacante',
-    component: () => import('../views/empresa/CrearVacanteView.vue'),
+    path: '/recuperar-password',
+    name: 'recuperar-password',
+    component: () => import('../views/auth/RecuperarPasswordView.vue'),
+    meta: { requiresAuth: false }
+  },
+
+  // === RUTAS DE EMPRESA ===
+  {
+    path: '/empresa',
+    meta: { requiresAuth: true, roles: ['empresa'] },
+    children: [
+      {
+        path: 'dashboard',
+        name: 'empresa-dashboard',
+        component: () => import('../views/empresa/DashboardEmpresa.vue')
+      },
+      {
+        path: 'registro',
+        name: 'empresa-registro',
+        component: () => import('../views/empresa/RegistroEmpresaView.vue')
+      },
+      {
+        path: 'perfil',
+        name: 'empresa-perfil',
+        component: () => import('../views/empresa/PerfilEmpresaView.vue')
+      },
+      {
+        path: 'vacantes',
+        name: 'empresa-vacantes',
+        component: () => import('../views/empresa/VacantesView.vue')
+      },
+      {
+        path: 'vacantes/crear',
+        name: 'empresa-crear-vacante',
+        component: () => import('../views/empresa/CrearVacanteView.vue')
+      },
+      {
+        path: 'vacantes/:id/postulaciones',
+        name: 'empresa-postulaciones',
+        component: () => import('../views/empresa/PostulacionesView.vue')
+      },
+      {
+        path: 'convenio',
+        name: 'empresa-convenio',
+        component: () => import('../views/empresa/ConvenioView.vue')
+      }
+    ]
+  },
+
+  // === RUTAS DE ESTUDIANTE ===
+  {
+    path: '/estudiante',
+    meta: { requiresAuth: true, roles: ['estudiante'] },
+    children: [
+      {
+        path: 'dashboard',
+        name: 'estudiante-dashboard',
+        component: () => import('../views/estudiante/DashboardEstudiante.vue')
+      },
+      {
+        path: 'registro',
+        name: 'estudiante-registro',
+        component: () => import('../views/estudiante/RegistroEstudianteView.vue')
+      },
+      {
+        path: 'perfil',
+        name: 'estudiante-perfil',
+        component: () => import('../views/estudiante/PerfilEstudianteView.vue')
+      },
+      {
+        path: 'vacantes',
+        name: 'estudiante-vacantes',
+        component: () => import('../views/estudiante/BuscarVacantesView.vue')
+      },
+      {
+        path: 'vacantes/:id',
+        name: 'estudiante-vacante-detalle',
+        component: () => import('../views/estudiante/VacanteDetalleView.vue')
+      },
+      {
+        path: 'postulaciones',
+        name: 'estudiante-postulaciones',
+        component: () => import('../views/estudiante/MisPostulacionesView.vue')
+      }
+    ]
+  },
+
+  // === RUTAS DE ADMINISTRADOR ===
+  {
+    path: '/admin',
+    meta: { 
+      requiresAuth: true, 
+      roles: ['admin', 'coordinador_extension', 'juridica', 'academico'] 
+    },
+    children: [
+      {
+        path: 'dashboard',
+        name: 'admin-dashboard',
+        component: () => import('../views/admin/DashboardAdmin.vue')
+      },
+      {
+        path: 'usuarios',
+        name: 'admin-usuarios',
+        component: () => import('../views/admin/GestionUsuariosView.vue'),
+        meta: { roles: ['admin'] }
+      },
+      {
+        path: 'empresas',
+        name: 'admin-empresas',
+        component: () => import('../views/admin/GestionEmpresasView.vue')
+      },
+      {
+        path: 'estudiantes',
+        name: 'admin-estudiantes',
+        component: () => import('../views/admin/GestionEstudiantesView.vue')
+      },
+      {
+        path: 'vacantes',
+        name: 'admin-vacantes',
+        component: () => import('../views/admin/GestionVacantesView.vue')
+      },
+      {
+        path: 'convenios',
+        name: 'admin-convenios',
+        component: () => import('../views/admin/ConveniosView.vue'),
+        meta: { roles: ['admin', 'coordinador_extension', 'juridica'] }
+      },
+      {
+        path: 'documentos',
+        name: 'admin-documentos',
+        component: () => import('../views/admin/ValidacionDocumentosView.vue'),
+        meta: { roles: ['admin', 'juridica'] }
+      },
+      {
+        path: 'reportes',
+        name: 'admin-reportes',
+        component: () => import('../views/admin/ReportesView.vue')
+      }
+    ]
+  },
+
+  // === RUTA 404 ===
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    component: () => import('../views/NotFoundView.vue')
   }
- 
-  // {
-  //   path: '/recuperar-password',
-  //   name: 'recuperar-password',
-  //   component: () => import('@/views/auth/RecuperarPasswordView.vue'),
-  //   meta: { requiresAuth: false }
-  // },
-
-  // // === RUTAS DE EMPRESA ===
-  // {
-  //   path: '/empresa',
-  //   meta: { requiresAuth: true, roles: ['empresa'] },
-  //   children: [
-  //     {
-  //       path: 'dashboard',
-  //       name: 'empresa-dashboard',
-  //       component: () => import('@/views/empresa/DashboardEmpresa.vue')
-  //     },
-  //     {
-  //       path: 'registro',
-  //       name: 'empresa-registro',
-  //       component: () => import('@/views/empresa/RegistroEmpresaView.vue')
-  //     },
-  //     {
-  //       path: 'perfil',
-  //       name: 'empresa-perfil',
-  //       component: () => import('@/views/empresa/PerfilEmpresaView.vue')
-  //     },
-  //     {
-  //       path: 'vacantes',
-  //       name: 'empresa-vacantes',
-  //       component: () => import('@/views/empresa/VacantesView.vue')
-  //     },
-  //     {
-  //       path: 'vacantes/crear',
-  //       name: 'empresa-crear-vacante',
-  //       component: () => import('@/views/empresa/CrearVacanteView.vue')
-  //     },
-  //     {
-  //       path: 'vacantes/:id/postulaciones',
-  //       name: 'empresa-postulaciones',
-  //       component: () => import('@/views/empresa/PostulacionesView.vue')
-  //     },
-  //     {
-  //       path: 'convenio',
-  //       name: 'empresa-convenio',
-  //       component: () => import('@/views/empresa/ConvenioView.vue')
-  //     }
-  //   ]
-  // },
-
-  // // === RUTAS DE ESTUDIANTE ===
-  // {
-  //   path: '/estudiante',
-  //   meta: { requiresAuth: true, roles: ['estudiante'] },
-  //   children: [
-  //     {
-  //       path: 'dashboard',
-  //       name: 'estudiante-dashboard',
-  //       component: () => import('@/views/estudiante/DashboardEstudiante.vue')
-  //     },
-  //     {
-  //       path: 'registro',
-  //       name: 'estudiante-registro',
-  //       component: () => import('@/views/estudiante/RegistroEstudianteView.vue')
-  //     },
-  //     {
-  //       path: 'perfil',
-  //       name: 'estudiante-perfil',
-  //       component: () => import('@/views/estudiante/PerfilEstudianteView.vue')
-  //     },
-  //     {
-  //       path: 'vacantes',
-  //       name: 'estudiante-vacantes',
-  //       component: () => import('@/views/estudiante/BuscarVacantesView.vue')
-  //     },
-  //     {
-  //       path: 'vacantes/:id',
-  //       name: 'estudiante-vacante-detalle',
-  //       component: () => import('@/views/estudiante/VacanteDetalleView.vue')
-  //     },
-  //     {
-  //       path: 'postulaciones',
-  //       name: 'estudiante-postulaciones',
-  //       component: () => import('@/views/estudiante/MisPostulacionesView.vue')
-  //     }
-  //   ]
-  // },
-
-  // // === RUTAS DE ADMINISTRADOR ===
-  // {
-  //   path: '/admin',
-  //   meta: { 
-  //     requiresAuth: true, 
-  //     roles: ['admin', 'coordinador_extension', 'juridica', 'academico'] 
-  //   },
-  //   children: [
-  //     {
-  //       path: 'dashboard',
-  //       name: 'admin-dashboard',
-  //       component: () => import('@/views/admin/DashboardAdmin.vue')
-  //     },
-  //     {
-  //       path: 'usuarios',
-  //       name: 'admin-usuarios',
-  //       component: () => import('@/views/admin/GestionUsuariosView.vue'),
-  //       meta: { roles: ['admin'] }
-  //     },
-  //     {
-  //       path: 'empresas',
-  //       name: 'admin-empresas',
-  //       component: () => import('@/views/admin/GestionEmpresasView.vue')
-  //     },
-  //     {
-  //       path: 'estudiantes',
-  //       name: 'admin-estudiantes',
-  //       component: () => import('@/views/admin/GestionEstudiantesView.vue')
-  //     },
-  //     {
-  //       path: 'vacantes',
-  //       name: 'admin-vacantes',
-  //       component: () => import('@/views/admin/GestionVacantesView.vue')
-  //     },
-  //     {
-  //       path: 'convenios',
-  //       name: 'admin-convenios',
-  //       component: () => import('@/views/admin/ConveniosView.vue'),
-  //       meta: { roles: ['admin', 'coordinador_extension', 'juridica'] }
-  //     },
-  //     {
-  //       path: 'documentos',
-  //       name: 'admin-documentos',
-  //       component: () => import('@/views/admin/ValidacionDocumentosView.vue'),
-  //       meta: { roles: ['admin', 'juridica'] }
-  //     },
-  //     {
-  //       path: 'reportes',
-  //       name: 'admin-reportes',
-  //       component: () => import('@/views/admin/ReportesView.vue')
-  //     }
-  //   ]
-  // },
-
-  // // === RUTA 404 ===
-  // {
-  //   path: '/:pathMatch(.*)*',
-  //   name: 'not-found',
-  //   component: () => import('@/views/NotFoundView.vue')
-  // }
 ];
 
 /**
