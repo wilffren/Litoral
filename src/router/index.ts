@@ -19,10 +19,15 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/registro',
-    name: 'register',
+    name: 'registro',
     component: () => import('../views/auth/RegisterView.vue'),
     meta: { requiresAuth: false, hideForAuth: true }
   },
+  {
+    path: '/dashboardEmpresa/createVacante',
+    name: 'crearVacante',
+    component: () => import('../views/empresa/CrearVacanteView.vue'),
+  }
  
   // {
   //   path: '/recuperar-password',
