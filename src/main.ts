@@ -3,6 +3,7 @@ import { createPinia } from 'pinia';
 import router from './router';
 import App from './App.vue';
 import './style.css';
+import { useAuthStore } from '@/stores/authStore';
 
 // Crear instancia de Vue
 const app = createApp(App);
@@ -16,3 +17,9 @@ app.use(router);
 
 // Montar la aplicación
 app.mount('#app');
+
+// ✅ Ahora que Pinia ya está activo, puedes usar el store
+const auth = useAuthStore();
+(window as any).auth = auth; // 👈 disponible en consola
+
+console.log('✅ Auth store disponible en window.auth');

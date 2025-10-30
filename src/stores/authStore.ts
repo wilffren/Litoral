@@ -1,11 +1,9 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import type { Usuario, LoginDTO, RegistroDTO } from '../models/Usuario';
-import { authService } from '../services/authService';
 
 /**
- * Store de autenticación
- * Maneja el estado de autenticación del usuario
+ * Store de autenticación (simulado sin backend)
  */
 export const useAuthStore = defineStore('auth', () => {
   // Estado
@@ -19,33 +17,68 @@ export const useAuthStore = defineStore('auth', () => {
   const userRole = computed(() => user.value?.rol);
   const userName = computed(() => user.value?.nombre);
 
-  /**
-   * Inicializar store desde sessionStorage
-   */
+  // Inicializar desde sessionStorage
   const init = () => {
-    const storedToken = authService.getToken();
-    const storedUser = authService.getUser();
-    
+    const storedToken = sessionStorage.getItem('token');
+    const storedUser = sessionStorage.getItem('user');
     if (storedToken && storedUser) {
       token.value = storedToken;
-      user.value = storedUser;
+      user.value = JSON.parse(storedUser);
     }
   };
 
   /**
-   * Iniciar sesión
+   * Iniciar sesión (simulado)
+   * Roles disponibles: empresa, estudiante, admin
    */
   const login = async (credentials: LoginDTO) => {
     loading.value = true;
     error.value = null;
-    
+
     try {
-      const response = await authService.login(credentials);
-      token.value = response.token;
-      user.value = response.user;
-      return response;
+      // Simulación de usuarios predefinidos
+      let rol: Usuario['rol'] | null = null;
+      let nombre = '';
+      switch (credentials.email) {
+        case 'admin@example.com':
+          if (credentials.password === 'admin') {
+            rol = 'admin';
+            nombre = 'Administrador';
+          }
+          break;
+        case 'empresa@example.com':
+          if (credentials.password === '1234') {
+            rol = 'empresa';
+            nombre = 'Empresa Demo';
+          }
+          break;
+        case 'estudiante@example.com':
+          if (credentials.password === '1234') {
+            rol = 'estudiante';
+            nombre = 'Estudiante Demo';
+          }
+          break;
+      }
+
+      if (!rol) throw new Error('Credenciales inválidas');
+
+      token.value = 'fake-token-123';
+      user.value = {
+        id: 1,
+        nombre,
+        email: credentials.email,
+        rol,
+        estado: 'activo',
+        perfil_id: 1,
+        permisos: [],
+      };
+
+      sessionStorage.setItem('token', token.value);
+      sessionStorage.setItem('user', JSON.stringify(user.value));
+
+      return { token: token.value, user: user.value };
     } catch (e: any) {
-      error.value = e.response?.data?.message || 'Error al iniciar sesión';
+      error.value = e.message || 'Error al iniciar sesión';
       throw e;
     } finally {
       loading.value = false;
@@ -53,19 +86,29 @@ export const useAuthStore = defineStore('auth', () => {
   };
 
   /**
-   * Registrar nuevo usuario
+   * Registrar usuario (simulado)
    */
   const registrar = async (data: RegistroDTO) => {
     loading.value = true;
     error.value = null;
-    
+
     try {
-      const response = await authService.registrar(data);
-      token.value = response.token;
-      user.value = response.user;
-      return response;
+      // Cualquier registro crea usuario con rol 'estudiante' por defecto
+      token.value = 'fake-token-123';
+      user.value = {
+        id: 2,
+        nombre: data.nombre,
+        email: data.email,
+        rol: 'estudiante',
+        estado: 'activo',
+        perfil_id: 2,
+        permisos: [],
+      };
+      sessionStorage.setItem('token', token.value);
+      sessionStorage.setItem('user', JSON.stringify(user.value));
+      return { token: token.value, user: user.value };
     } catch (e: any) {
-      error.value = e.response?.data?.message || 'Error al registrar usuario';
+      error.value = e.message || 'Error al registrar usuario';
       throw e;
     } finally {
       loading.value = false;
@@ -77,18 +120,18 @@ export const useAuthStore = defineStore('auth', () => {
    */
   const logout = async () => {
     loading.value = true;
-    
     try {
-      await authService.logout();
-    } finally {
       token.value = null;
       user.value = null;
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('user');
+    } finally {
       loading.value = false;
     }
   };
 
   /**
-   * Actualizar datos del usuario en el store
+   * Actualizar datos del usuario
    */
   const updateUser = (userData: Partial<Usuario>) => {
     if (user.value) {
@@ -98,31 +141,34 @@ export const useAuthStore = defineStore('auth', () => {
   };
 
   /**
-   * Verificar si el usuario tiene un permiso
+   * Verificar permisos
    */
   const hasPermission = (permiso: string): boolean => {
-    return authService.hasPermission(permiso);
+    if (!user.value?.permisos) return false;
+    return user.value.permisos.includes(permiso);
   };
 
   /**
-   * Verificar si el usuario tiene un rol
+   * Verificar rol
    */
   const hasRole = (rol: string | string[]): boolean => {
-    return authService.hasRole(rol);
+    if (!user.value?.rol) return false;
+    if (Array.isArray(rol)) return rol.includes(user.value.rol);
+    return user.value.rol === rol;
   };
 
   /**
-   * Obtener usuario actual del backend
+   * Obtener usuario actual (simulado)
    */
   const fetchCurrentUser = async () => {
     loading.value = true;
     error.value = null;
-    
+
     try {
-      user.value = await authService.obtenerUsuarioActual();
-      sessionStorage.setItem('user', JSON.stringify(user.value));
+      if (!user.value) throw new Error('No autenticado');
+      return user.value;
     } catch (e: any) {
-      error.value = e.response?.data?.message || 'Error al obtener usuario';
+      error.value = e.message || 'Error al obtener usuario';
       throw e;
     } finally {
       loading.value = false;
@@ -138,12 +184,12 @@ export const useAuthStore = defineStore('auth', () => {
     token,
     loading,
     error,
-    
+
     // Computed
     isAuthenticated,
     userRole,
     userName,
-    
+
     // Acciones
     login,
     registrar,
@@ -152,6 +198,6 @@ export const useAuthStore = defineStore('auth', () => {
     hasPermission,
     hasRole,
     fetchCurrentUser,
-    init
+    init,
   };
 });

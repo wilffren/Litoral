@@ -33,12 +33,14 @@ const routes: RouteRecordRaw[] = [
   // === RUTAS DE EMPRESA ===
   {
     path: '/empresa',
+    component: () => import('../layouts/EmpresaLayout.vue'), // 👈 NUEVO
     meta: { requiresAuth: true, roles: ['empresa'] },
     children: [
       {
         path: 'dashboard',
         name: 'empresa-dashboard',
         component: () => import('../views/empresa/DashboardEmpresa.vue')
+      
       },
       {
         path: 'registro',
@@ -59,15 +61,14 @@ const routes: RouteRecordRaw[] = [
         path: 'vacantes/crear',
         name: 'empresa-crear-vacante',
         component: () => import('../views/empresa/CrearVacanteView.vue')
-      },
-     
-     
+      }
     ]
   },
 
   // === RUTAS DE ESTUDIANTE ===
   {
     path: '/estudiante',
+    component: () => import('../layouts/EstudianteLayout.vue'), // 👈 NUEVO
     meta: { requiresAuth: true, roles: ['estudiante'] },
     children: [
       {
@@ -94,14 +95,14 @@ const routes: RouteRecordRaw[] = [
         path: 'vacantes/:id',
         name: 'estudiante-vacante-detalle',
         component: () => import('../views/estudiante/VacanteDetalleView.vue')
-      },
-      
+      }
     ]
   },
 
   // === RUTAS DE ADMINISTRADOR ===
   {
     path: '/admin',
+    component: () => import('../layouts/AdminLayout.vue'), // 👈 NUEVO
     meta: { 
       requiresAuth: true, 
       roles: ['admin', 'coordinador_extension', 'juridica', 'academico'] 
@@ -163,17 +164,12 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition;
-    } else {
-      return { top: 0 };
-    }
+    return savedPosition || { top: 0 };
   }
 });
 
 /**
  * Guard de navegación global
- * Verifica autenticación y permisos
  */
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
@@ -189,17 +185,12 @@ router.beforeEach((to, from, next) => {
 
   // Si está autenticado y trata de acceder a login/registro
   if (hideForAuth && authStore.isAuthenticated) {
-    // Redirigir según el rol
     const userRole = authStore.userRole;
-    if (userRole === 'empresa') {
-      next({ name: 'empresa-dashboard' });
-    } else if (userRole === 'estudiante') {
-      next({ name: 'estudiante-dashboard' });
-    } else if (['admin', 'coordinador_extension', 'juridica', 'academico'].includes(userRole || '')) {
+    if (userRole === 'empresa') next({ name: 'empresa-dashboard' });
+    else if (userRole === 'estudiante') next({ name: 'estudiante-dashboard' });
+    else if (['admin', 'coordinador_extension', 'juridica', 'academico'].includes(userRole || ''))
       next({ name: 'admin-dashboard' });
-    } else {
-      next();
-    }
+    else next();
     return;
   }
 
